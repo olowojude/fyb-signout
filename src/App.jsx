@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { Upload, Download, Calendar, MapPin } from 'lucide-react';
 import { toPng } from 'html-to-image';
+import { Analytics } from "@vercel/analytics/next"
 
 /**
  * FlyerGenerator (Fully Responsive)
