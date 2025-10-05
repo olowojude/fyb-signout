@@ -142,7 +142,7 @@ export default function FlyerGenerator() {
     if (flyerRef.current) {
       const currentWidth = flyerRef.current.offsetWidth;
       const currentHeight = flyerRef.current.offsetHeight;
-      
+
       const scale = 3;
       const targetWidth = currentWidth * scale;
       const targetHeight = currentHeight * scale;
@@ -277,7 +277,7 @@ export default function FlyerGenerator() {
             <h2 className="text-xl sm:text-2xl font-semibold text-gray-700 mb-4 sm:mb-6 text-center">Live Preview</h2>
 
             <div className="flex justify-center items-center w-full">
-              <div className="w-full max-w-[400px] sm:max-w-[450px] md:max-w-[500px] mx-auto" style={{ aspectRatio: '2/3  ' }}>
+              <div className="w-full max-w-[400px] sm:max-w-[450px] md:max-w-[500px] mx-auto" style={{ aspectRatio: '2/3.15  ' }}>
                 <div
                   ref={flyerRef}
                   className="relative bg-white shadow-2xl w-full h-full"
