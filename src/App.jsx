@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { Upload, Download, Calendar, MapPin } from 'lucide-react';
 import { toPng } from 'html-to-image';
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from '@vercel/analytics/react';
 
 /**
  * FlyerGenerator (Fully Responsive)
@@ -172,6 +172,7 @@ export default function FlyerGenerator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 p-2 sm:p-4 md:p-8">
+      <Analytics />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 sm:mb-6 md:mb-8 text-center px-2">
           SignOut Flyer Generator
@@ -264,7 +265,7 @@ export default function FlyerGenerator() {
             {/* Export */}
             <button
               onClick={handleExport}
-              className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-lg hover:from-blue-700 hover:to-cyan-700 transition duration-300 flex items-center justify-center gap-2 sm:gap-3 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base"
+              className="w-full bg-blue-600 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-lg hover:bg-blue-800 transition duration-300 flex items-center justify-center gap-2 sm:gap-3 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm sm:text-base"
             >
               <Download className="w-4 h-4 sm:w-5 sm:h-5" />
               Download Flyer
