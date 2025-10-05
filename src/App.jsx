@@ -404,7 +404,7 @@ export default function FlyerGenerator() {
                       style={{
                         top: '23%',
                         right: '8%',
-                        width: 'clamp(120px, 18%, 120px)',
+                        width: 'clamp(80px, 18%, 120px)',
                         aspectRatio: '1/1',
                         zIndex: 15
                       }}
