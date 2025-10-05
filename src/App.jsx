@@ -273,7 +273,7 @@ export default function FlyerGenerator() {
                 ref={flyerRef}
                 className="relative bg-white shadow-2xl"
                 style={{
-                  width: '900px',
+                  width: '600px',
                   height: '900px',
                   overflow: 'hidden',
                   maxWidth: '100%',
