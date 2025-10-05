@@ -1,0 +1,322 @@
+import React, { useState, useRef } from 'react';
+import { Upload, Download, Calendar, MapPin } from 'lucide-react';
+import { toPng } from 'html-to-image';
+
+export default function FlyerGenerator() {
+  const [photo, setPhoto] = useState(null);
+  const [day, setDay] = useState('');
+  const [month, setMonth] = useState('');
+  const [year, setYear] = useState('');
+  const [location, setLocation] = useState('');
+  const flyerRef = useRef(null);
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setPhoto(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleExport = async () => {
+    if (flyerRef.current) {
+      const targetWidth = 600;
+      const targetHeight = 900;
+
+      toPng(flyerRef.current, {
+        width: targetWidth,
+        height: targetHeight,
+        style: {
+          width: `${targetWidth}px`,
+          height: `${targetHeight}px`,
+        },
+        pixelRatio: 3
+      })
+        .then((dataUrl) => {
+          const link = document.createElement('a');
+          link.download = 'signout-flyer-hd.png';
+          link.href = dataUrl;
+          link.click();
+        })
+        .catch((error) => {
+          console.error('Export failed:', error);
+        });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-8 text-center">
+          SignOut Flyer Generator
+        </h1>
+
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Controls Section */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 space-y-6 h-fit">
+            <h2 className="text-2xl font-semibold text-gray-700 mb-6">Customize Your Flyer</h2>
+
+            {/* Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                <Upload className="inline w-5 h-5 mr-2" />
+                Upload Photo
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer transition"
+              />
+              <p className="mt-2 text-xs text-gray-500">Upload a photo to display in the center box</p>
+            </div>
+
+            {/* Date */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                <Calendar className="inline w-5 h-5 mr-2" />
+                Event Date
+              </label>
+              <div className="grid grid-cols-3 gap-3">
+                <input
+                  type="text"
+                  value={day}
+                  onChange={(e) => setDay(e.target.value)}
+                  placeholder="Day (26)"
+                  className="px-3 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-center text-gray-800"
+                />
+                <input
+                  type="text"
+                  value={month}
+                  onChange={(e) => setMonth(e.target.value)}
+                  placeholder="Month (Sept.)"
+                  className="px-3 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-center text-gray-800"
+                />
+                <input
+                  type="text"
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                  placeholder="Year (2025)"
+                  className="px-3 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-center text-gray-800"
+                />
+              </div>
+              <p className="mt-2 text-xs text-gray-500">This will appear in the badge at top-right corner</p>
+            </div>
+
+            {/* Location */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                <MapPin className="inline w-5 h-5 mr-2" />
+                Location
+              </label>
+              <textarea
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Line 1: @Big Tigers Club&#10;Line 2: Beside Perm Site Federal College..."
+                rows="3"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition resize-none text-gray-800"
+              />
+              <p className="mt-2 text-xs text-gray-500">Use line breaks for address details</p>
+            </div>
+
+            {/* Export */}
+            <button
+              onClick={handleExport}
+              className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold py-4 px-6 rounded-lg hover:from-blue-700 hover:to-cyan-700 transition duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              <Download className="w-5 h-5" />
+              Export High Definition Flyer
+            </button>
+          </div>
+
+          {/* Preview Section */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+            <h2 className="text-2xl font-semibold text-gray-700 mb-6 text-center">Live Preview</h2>
+
+            <div className="flex justify-center overflow-auto">
+              <div
+                ref={flyerRef}
+                className="relative bg-white shadow-2xl"
+                style={{
+                  width: '600px',
+                  height: '900px',
+                  overflow: 'hidden',
+                }}
+              >
+                {/* Background template */}
+                <img
+                  src="/flyer-template.png"
+                  alt="template"
+                  crossOrigin="anonymous"
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    pointerEvents: 'none',
+                    userSelect: 'none'
+                  }}
+                />
+
+                {/* Photo Box with fade */}
+                <div
+                  className="absolute"
+                  style={{
+                    top: '27%',
+                    left: '15.7%',
+                    width: '70.2%',
+                    height: '52.5%',
+                    overflow: 'hidden',
+                    borderRadius: '.5em',
+                    position: 'relative'
+                  }}
+                >
+                  {photo ? (
+                    <div className="w-full h-full relative">
+                      <img
+                        src={photo}
+                        alt="Uploaded"
+                        crossOrigin="anonymous"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'center'
+                        }}
+                      />
+                      {/* Fade overlay */}
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          background: 'linear-gradient(to bottom, rgba(0,0,0,0) 75%, white 100%)',
+                          pointerEvents: 'none'
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-white bg-opacity-80">
+                      <div className="text-center text-gray-400">
+                        <Upload className="w-16 h-16 mx-auto mb-3 opacity-50" />
+                        <p className="text-sm font-medium">Your photo will appear here</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Date Badge - Removed */}
+                {(day || month || year) && (
+                  <div
+                    className="absolute"
+                    style={{
+                      top: '13%',
+                      right: '8%',
+                      width: '120px',
+                      height: '120px'
+                    }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 200 200">
+                      <circle cx="100" cy="100" r="80" fill="#2f3b42" />
+                      <text 
+                        x="100" 
+                        y="95" 
+                        textAnchor="middle" 
+                        fontFamily="'Poppins', 'Inter', system-ui, sans-serif" 
+                        fontSize="52" 
+                        fill="#ffffff" 
+                        fontWeight="800"
+                      >
+                        {day}
+                      </text>
+                      <text 
+                        x="100" 
+                        y="118" 
+                        textAnchor="middle" 
+                        fontFamily="'Poppins', 'Inter', system-ui, sans-serif" 
+                        fontSize="16" 
+                        fill="#ffffff"
+                        fontWeight="400"
+                      >
+                        {month}
+                      </text>
+                      <text 
+                        x="100" 
+                        y="138" 
+                        textAnchor="middle" 
+                        fontFamily="'Poppins', 'Inter', system-ui, sans-serif" 
+                        fontSize="18" 
+                        fill="#ffffff"
+                        fontWeight="600"
+                      >
+                        {year}
+                      </text>
+                    </svg>
+                  </div>
+                )}
+
+                {/* Location Box - Black Rounded Rectangle */}
+                {location && location.trim() !== '' && (
+                  <div
+                    className="absolute"
+                    style={{
+                      bottom: '4em',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '88%',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      zIndex: 20
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: '#1a1a1a',
+                        borderRadius: '28px',
+                        padding: '22px 36px 26px 36px',
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+                        width: '100%'
+                      }}
+                    >
+                      {/* Hardcoded First Line */}
+                      <div className="flex items-center justify-center gap-2" style={{ marginBottom: '10px' }}>
+                        <MapPin style={{ width: '18px', height: '18px', color: 'white' }} />
+                        <p
+                          style={{
+                            fontSize: '17px',
+                            fontWeight: '700',
+                            color: 'white',
+                            letterSpacing: '0.3px',
+                            textAlign: 'center',
+                            lineHeight: '1.5',
+                            fontFamily: "'Poppins', 'Inter', system-ui, sans-serif"
+                          }}
+                        >
+                          University of Benin
+                        </p>
+                      </div>
+                      {/* User Input Second Line */}
+                      <p
+                        style={{
+                          fontSize: '13px',
+                          fontWeight: '400',
+                          color: 'rgba(255, 255, 255, 0.88)',
+                          letterSpacing: '0.3px',
+                          textAlign: 'center',
+                          lineHeight: '1.5',
+                          fontFamily: "'Poppins', 'Inter', system-ui, sans-serif"
+                        }}
+                      >
+                        {location}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>  
+    </div>
+  );
+}
