@@ -206,22 +206,34 @@ export default function FlyerGenerator() {
                 <input
                   type="text"
                   value={day}
-                  onChange={(e) => setDay(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.length <= 2) setDay(value);
+                  }}
                   placeholder="Day"
+                  maxLength={2}
                   className="px-2 sm:px-3 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-center text-xs sm:text-sm text-gray-800"
                 />
                 <input
                   type="text"
                   value={month}
-                  onChange={(e) => setMonth(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.length <= 12) setMonth(value);
+                  }}
                   placeholder="Month"
+                  maxLength={12}
                   className="px-2 sm:px-3 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-center text-xs sm:text-sm text-gray-800"
                 />
                 <input
                   type="text"
                   value={year}
-                  onChange={(e) => setYear(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.length <= 4) setYear(value);
+                  }}
                   placeholder="Year"
+                  maxLength={4}
                   className="px-2 sm:px-3 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-center text-xs sm:text-sm text-gray-800"
                 />
               </div>
@@ -232,16 +244,20 @@ export default function FlyerGenerator() {
             <div>
               <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3">
                 <MapPin className="inline w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
-                Location
+                Location and Time
               </label>
               <textarea
                 value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 50) setLocation(value);
+                }}
                 placeholder="e.g. Old Pharmacy Building at 5pm"
                 rows="3"
+                maxLength={50}
                 className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition resize-none text-xs sm:text-sm text-gray-800"
               />
-              <p className="mt-1 sm:mt-2 text-xs text-gray-500">First line is "University of Benin", your text appears as second line</p>
+              <p className="mt-1 sm:mt-2 text-xs text-gray-500">First line is "University of Benin", your text appears as second line (max 50 characters)</p>
             </div>
 
             {/* Export */}
@@ -259,7 +275,7 @@ export default function FlyerGenerator() {
             <h2 className="text-xl sm:text-2xl font-semibold text-gray-700 mb-4 sm:mb-6 text-center">Live Preview</h2>
 
             <div className="flex justify-center items-center w-full">
-              <div className="w-full max-w-[400px] sm:max-w-[450px] md:max-w-[500px] mx-auto" style={{ aspectRatio: '2/3' }}>
+              <div className="w-full max-w-[400px] sm:max-w-[450px] md:max-w-[500px] mx-auto" style={{ aspectRatio: '2/3  ' }}>
                 <div
                   ref={flyerRef}
                   className="relative bg-white shadow-2xl w-full h-full"
@@ -386,9 +402,9 @@ export default function FlyerGenerator() {
                     <div
                       className="absolute"
                       style={{
-                        top: '25%',
-                        right: '2%',
-                        width: 'clamp(60px, 18%, 120px)',
+                        top: '23%',
+                        right: '8%',
+                        width: 'clamp(120px, 18%, 120px)',
                         aspectRatio: '1/1',
                         zIndex: 15
                       }}
