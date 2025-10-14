@@ -1,7 +1,6 @@
 import React, { useState, useRef, useMemo } from 'react';
-import { Upload, Download, Calendar, MapPin } from 'lucide-react';
+import { Upload, Download, Calendar, MapPin, Clock } from 'lucide-react';
 import { toPng } from 'html-to-image';
-import { Analytics } from '@vercel/analytics/react';
 
 /**
  * FlyerGenerator (Fully Responsive)
@@ -119,7 +118,9 @@ export default function FlyerGenerator() {
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
+  const [university, setUniversity] = useState('');
   const [location, setLocation] = useState('');
+  const [time, setTime] = useState('');
   const flyerRef = useRef(null);
 
   const seedRef = useRef(Math.floor(Math.random() * 1e9));
@@ -138,7 +139,14 @@ export default function FlyerGenerator() {
     }
   };
 
+  const isFormComplete = photo && day && month && year && university && location && time;
+
   const handleExport = async () => {
+    if (!isFormComplete) {
+      alert('Please complete all fields before downloading the flyer.');
+      return;
+    }
+
     if (flyerRef.current) {
       const currentWidth = flyerRef.current.offsetWidth;
       const currentHeight = flyerRef.current.offsetHeight;
@@ -172,7 +180,6 @@ export default function FlyerGenerator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 p-2 sm:p-4 md:p-8">
-      <Analytics />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 sm:mb-6 md:mb-8 text-center px-2">
           SignOut Flyer Generator
@@ -242,24 +249,64 @@ export default function FlyerGenerator() {
               <p className="mt-1 sm:mt-2 text-xs text-gray-500">Enter your Signout Date</p>
             </div>
 
+            {/* University Name */}
+            <div>
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3">
+                <MapPin className="inline w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+                University Name
+              </label>
+              <input
+                type="text"
+                value={university}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 50) setUniversity(value);
+                }}
+                placeholder="e.g. University of Benin"
+                maxLength={50}
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-xs sm:text-sm text-gray-800"
+              />
+              <p className="mt-1 sm:mt-2 text-xs text-gray-500">Enter your university name (max 50 characters)</p>
+            </div>
+
             {/* Location */}
             <div>
               <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3">
                 <MapPin className="inline w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
-                Location and Time
+                Location
               </label>
-              <textarea
+              <input
+                type="text"
                 value={location}
                 onChange={(e) => {
                   const value = e.target.value;
                   if (value.length <= 50) setLocation(value);
                 }}
-                placeholder="e.g. Old Pharmacy Building at 5pm"
-                rows="3"
+                placeholder="e.g. Old Pharmacy Building"
                 maxLength={50}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition resize-none text-xs sm:text-sm text-gray-800"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-xs sm:text-sm text-gray-800"
               />
-              <p className="mt-1 sm:mt-2 text-xs text-gray-500">First line is "University of Benin", your text appears as second line (max 50 characters)</p>
+              <p className="mt-1 sm:mt-2 text-xs text-gray-500">Enter the event location (max 50 characters)</p>
+            </div>
+
+            {/* Time */}
+            <div>
+              <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2 sm:mb-3">
+                <Clock className="inline w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+                Time
+              </label>
+              <input
+                type="text"
+                value={time}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value.length <= 20) setTime(value);
+                }}
+                placeholder="e.g. 5pm"
+                maxLength={20}
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-xs sm:text-sm text-gray-800"
+              />
+              <p className="mt-1 sm:mt-2 text-xs text-gray-500">Enter the event time (max 20 characters)</p>
             </div>
 
             {/* Export */}
@@ -471,7 +518,7 @@ export default function FlyerGenerator() {
                   )}
 
                   {/* Location Box - Black Rounded Rectangle */}
-                  {location && location.trim() !== '' && (
+                  {(university || location || time) && (university.trim() !== '' || location.trim() !== '' || time.trim() !== '') && (
                     <div
                       className="absolute"
                       style={{
@@ -494,35 +541,61 @@ export default function FlyerGenerator() {
                           width: '100%'
                         }}
                       >
-                        <div className="flex items-center justify-center" style={{ marginBottom: 'clamp(4px, 0.5em, 8px)', gap: 'clamp(4px, 0.4em, 8px)' }}>
-                          <MapPin style={{ width: 'clamp(12px, 0.9em, 14px)', height: 'clamp(12px, 0.9em, 14px)', color: 'white', flexShrink: 0 }} />
-                          <p
-                            style={{
-                              fontSize: 'clamp(11px, 0.85em, 13.6px)',
-                              fontWeight: '700',
-                              color: 'white',
-                              letterSpacing: '0.3px',
-                              textAlign: 'center',
-                              lineHeight: '1.3',
-                              fontFamily: "Poppins, Inter, system-ui, sans-serif"
-                            }}
-                          >
-                            University of Benin
-                          </p>
-                        </div>
-                        <p
-                          style={{
-                            fontSize: 'clamp(9px, 0.7em, 11.2px)',
-                            fontWeight: '400',
-                            color: 'rgba(255, 255, 255, 0.88)',
-                            letterSpacing: '0.2px',
-                            textAlign: 'center',
-                            lineHeight: '1.3',
-                            fontFamily: "Poppins, Inter, system-ui, sans-serif"
-                          }}
-                        >
-                          {location}
-                        </p>
+                        {university && university.trim() !== '' && (
+                          <div className="flex items-center justify-center" style={{ marginBottom: (location && location.trim() !== '') || (time && time.trim() !== '') ? 'clamp(4px, 0.5em, 8px)' : '0', gap: 'clamp(4px, 0.4em, 8px)' }}>
+                            <MapPin style={{ width: 'clamp(12px, 0.9em, 14px)', height: 'clamp(12px, 0.9em, 14px)', color: 'white', flexShrink: 0 }} />
+                            <p
+                              style={{
+                                fontSize: 'clamp(11px, 0.85em, 13.6px)',
+                                fontWeight: '700',
+                                color: 'white',
+                                letterSpacing: '0.3px',
+                                textAlign: 'center',
+                                lineHeight: '1.3',
+                                fontFamily: "Poppins, Inter, system-ui, sans-serif"
+                              }}
+                            >
+                              {university}
+                            </p>
+                          </div>
+                        )}
+                        {(location && location.trim() !== '') || (time && time.trim() !== '') ? (
+                          <div className="flex items-center justify-center" style={{ gap: 'clamp(6px, 0.5em, 8px)' }}>
+                            {location && location.trim() !== '' && (
+                              <p
+                                style={{
+                                  fontSize: 'clamp(9px, 0.7em, 11.2px)',
+                                  fontWeight: '400',
+                                  color: 'rgba(255, 255, 255, 0.88)',
+                                  letterSpacing: '0.2px',
+                                  textAlign: 'center',
+                                  lineHeight: '1.3',
+                                  fontFamily: "Poppins, Inter, system-ui, sans-serif"
+                                }}
+                              >
+                                {location}
+                              </p>
+                            )}
+                            {time && time.trim() !== '' && (
+                              <div className="flex items-center" style={{ gap: 'clamp(3px, 0.3em, 5px)' }}>
+                                <Clock style={{ width: 'clamp(10px, 0.75em, 12px)', height: 'clamp(10px, 0.75em, 12px)', color: 'rgba(255, 255, 255, 0.88)', flexShrink: 0 }} />
+                                <p
+                                  style={{
+                                    fontSize: 'clamp(9px, 0.7em, 11.2px)',
+                                    fontWeight: '400',
+                                    color: 'rgba(255, 255, 255, 0.88)',
+                                    letterSpacing: '0.2px',
+                                    textAlign: 'center',
+                                    lineHeight: '1.3',
+                                    fontFamily: "Poppins, Inter, system-ui, sans-serif"
+                                  }}
+                                >
+                                  {time}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   )}
